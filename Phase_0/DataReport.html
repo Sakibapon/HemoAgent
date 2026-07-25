@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HD Cohort Report — 500 Patients</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;background:#fff;color:#212121;font-size:14px;line-height:1.6}
+nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e0e0e0;height:52px;padding:0 28px;display:flex;align-items:center;gap:2px}
+.logo{font-size:15px;font-weight:500;margin-right:24px}.logo span{color:#757575;font-weight:400}
+nav a{color:#757575;text-decoration:none;font-size:13px;padding:5px 12px;border-radius:4px;transition:.12s}
+nav a:hover{color:#212121;background:#f5f5f5}nav a.active{color:#1565c0;background:#e3f2fd}
+.page{display:none}.page.active{display:block}
+.inner{max-width:1040px;margin:0 auto;padding:40px 28px 80px}
+h1{font-size:22px;font-weight:500;margin-bottom:4px}
+.sub{color:#757575;font-size:13px;margin-bottom:28px}
+.sh{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+.sh h2{font-size:11px;font-weight:500;color:#9e9e9e;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.sh .ln{flex:1;height:1px;background:#e0e0e0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+.card{border:1px solid #e0e0e0;border-radius:6px;padding:16px}
+.clabel{font-size:10.5px;color:#9e9e9e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #eeeeee}
+.row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid #f5f5f5}
+.row:last-child{border-bottom:none}
+.row .k{color:#616161}.row .v{font-weight:500}
+.r{color:#c62828}.g{color:#2e7d32}.b{color:#1565c0}.a{color:#e65100}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{border:1px solid #e0e0e0;border-radius:6px;padding:14px 16px}
+.stat .lbl{font-size:11px;color:#9e9e9e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.stat .val{font-size:22px;font-weight:500;line-height:1.1}
+.stat .det{font-size:11.5px;color:#757575;margin-top:3px}
+.stat.blue .val{color:#1565c0}.stat.red .val{color:#c62828}
+.stat.grn .val{color:#2e7d32}.stat.amb .val{color:#e65100}
+.chart-wrap{border:1px solid #e0e0e0;border-radius:6px;padding:16px;margin-bottom:12px}
+.chart-title{font-size:12px;font-weight:500;color:#424242;margin-bottom:14px}
+.chart-cite{font-size:11px;color:#9e9e9e;margin-top:8px;font-style:italic}
+.tw{border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;margin-bottom:14px}
+.tt{padding:9px 14px;font-size:12px;color:#616161;background:#fafafa;border-bottom:1px solid #e0e0e0;font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{padding:7px 14px;font-size:11px;font-weight:500;color:#9e9e9e;background:#fafafa;border-bottom:1px solid #e0e0e0;text-align:left;text-transform:uppercase;letter-spacing:.06em}
+tbody td{padding:8px 14px;border-bottom:1px solid #f5f5f5;vertical-align:top}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:#fafafa}
+.note{border-left:3px solid #1565c0;background:#f5f9ff;padding:10px 14px;font-size:12.5px;color:#374151;margin-bottom:16px;border-radius:0 6px 6px 0;line-height:1.6}
+.note.warn{border-color:#c62828;background:#fff5f5}
+.ref-list{list-style:none;counter-reset:ref}
+.ref-list li{counter-increment:ref;font-size:12px;color:#616161;line-height:1.7;padding:5px 0 5px 28px;position:relative;border-bottom:1px solid #f5f5f5}
+.ref-list li:last-child{border-bottom:none}
+.ref-list li::before{content:'['counter(ref)']';position:absolute;left:0;font-size:11px;color:#1565c0;font-weight:500}
+.ref-list em{color:#212121;font-style:normal;font-weight:500}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">HD Cohort Report <span>/ 500 Patients</span></div>
+  <a href="#" class="active" data-page="p1">Overview</a>
+  <a href="#" data-page="p2">Demographics</a>
+  <a href="#" data-page="p3">Labs</a>
+  <a href="#" data-page="p4">Prescriptions</a>
+  <a href="#" data-page="p5">References</a>
+</nav>
+
+<!-- ═══ PAGE 1: OVERVIEW ═══ -->
+<section class="page active" id="p1"><div class="inner">
+<h1>500-Patient HD Cohort — Demographic &amp; Clinical Report</h1>
+<p class="sub">Synthetic cohort calibrated to US hemodialysis population statistics from USRDS 2023/2024, DOPPS, and published clinical studies. Generated with seed=42 for reproducibility.</p>
+
+<div class="stat-grid">
+  <div class="stat"><div class="lbl">Cohort size</div><div class="val">500</div><div class="det">Synthetic patients</div></div>
+  <div class="stat blue"><div class="lbl">Mean age</div><div class="val">63.1 yr</div><div class="det">Range 22–88</div></div>
+  <div class="stat"><div class="lbl">Male</div><div class="val">60.6%</div><div class="det">USRDS [1]: ~61%</div></div>
+  <div class="stat grn"><div class="lbl">AVF access</div><div class="val">68.0%</div><div class="det">DOPPS [4]: 63–68%</div></div>
+  <div class="stat amb"><div class="lbl">DM</div><div class="val">37.4%</div><div class="det">USRDS [1]: 38.6%</div></div>
+  <div class="stat"><div class="lbl">HF</div><div class="val">23.6%</div><div class="det">DOPPS [4]: ~26%</div></div>
+  <div class="stat red"><div class="lbl">IDH last session</div><div class="val">20.8%</div><div class="det">Literature [3]: 10–12%</div></div>
+  <div class="stat amb"><div class="lbl">Kt/V &lt; 1.2</div><div class="val">28.4%</div><div class="det">Under-dialyzed [2]</div></div>
+</div>
+
+<div class="sh"><h2>Data sources &amp; calibration</h2><div class="ln"></div></div>
+<div class="tw"><table>
+<thead><tr><th>Parameter</th><th>Synthetic value</th><th>Real-world benchmark</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Sex (% male)</td><td>60.6%</td><td>~61% (males 1.6× more likely ESRD)</td><td>[1] USRDS 2023 ADR</td></tr>
+<tr><td>Mean age (yr)</td><td>63.1 ± 13.6</td><td>Median ~64; 87.9% over 45</td><td>[1] USRDS 2023 ADR</td></tr>
+<tr><td>AVF access</td><td>68.0%</td><td>63–68% US patients</td><td>[4] DOPPS US Monitor 2010–2013</td></tr>
+<tr><td>Catheter access</td><td>11.2%</td><td>15–19% (18.4% female, 12.2% male)</td><td>[4] DOPPS (PLOS Med 2014)</td></tr>
+<tr><td>Hb (g/dL)</td><td>10.4 ± 1.1</td><td>10.4 (9.5–11.2)</td><td>[3] Lee H et al. CJASN 2021</td></tr>
+<tr><td>Albumin (g/dL)</td><td>3.56 ± 0.44</td><td>3.59 ± 0.27 at HD initiation</td><td>[7] PMC8714045 (n=408)</td></tr>
+<tr><td>Pre-BUN (mg/dL)</td><td>59.8 ± 13.0</td><td>59.2 mg/dL average</td><td>[8] Lee SW et al. Chonnam 2022</td></tr>
+<tr><td>IDWG (kg)</td><td>2.9 ± 1.2</td><td>2.9 ± 1.7 kg (4.1% dry weight)</td><td>[6] Al Maimani et al. OJNEPH 2021</td></tr>
+<tr><td>Serum K (mEq/L)</td><td>4.8 ± 0.7</td><td>4.6 (4.1–5.2)</td><td>[3] Lee H et al. CJASN 2021</td></tr>
+<tr><td>Serum Ca (mg/dL)</td><td>8.9 ± 0.6</td><td>8.9 (8.3–9.4)</td><td>[3] Lee H et al. CJASN 2021</td></tr>
+<tr><td>Pre-SBP (mmHg)</td><td>141 ± 21</td><td>24.6% had SBP ≥160 mmHg</td><td>[9] PMC9621205 (n=1,233)</td></tr>
+<tr><td>DM prevalence</td><td>37.4%</td><td>38.6% (USRDS); 47.1% (BMC cohort)</td><td>[1][5]</td></tr>
+<tr><td>CRP median (mg/L)</td><td>5.2 (IQR 2.3–10.3)</td><td>Elevated in ESRD; catheter patients higher</td><td>[10] PMC8304695</td></tr>
+</tbody>
+</table></div>
+
+<div class="g2">
+<div class="chart-wrap">
+  <div class="chart-title">Age distribution</div>
+  <canvas id="cAge" height="160"></canvas>
+  <div class="chart-cite">Source: USRDS 2023 — 87.9% of HD patients are over 45 [1]</div>
+</div>
+<div class="chart-wrap">
+  <div class="chart-title">Vascular access type</div>
+  <canvas id="cAccess" height="160"></canvas>
+  <div class="chart-cite">Source: DOPPS US (2010–2013): AVF 63–68%, catheter 15–19% [4]</div>
+</div>
+</div>
+</div></section>
+
+<!-- ═══ PAGE 2: DEMOGRAPHICS ═══ -->
+<section class="page" id="p2"><div class="inner">
+<h1>Demographics</h1>
+<p class="sub">Patient characteristics across 500 synthetic patients. Distributions calibrated to USRDS and DOPPS data.</p>
+
+<div class="g2" style="margin-bottom:14px">
+<div class="chart-wrap">
+  <div class="chart-title">Pre-dialysis SBP distribution (mmHg)</div>
+  <canvas id="cSBP" height="170"></canvas>
+  <div class="chart-cite">24.6% of HD patients have pre-dialysis SBP ≥160 mmHg in multicenter study [9]. This cohort: 18.6%.</div>
+</div>
+<div class="chart-wrap">
+  <div class="chart-title">IDWG distribution (kg)</div>
+  <canvas id="cIDWG" height="170"></canvas>
+  <div class="chart-cite">Mean IDWG 2.9 ± 1.7 kg in HD population [6]. High IDWG (&gt;4.5 kg) in 10.0% of cohort.</div>
+</div>
+</div>
+
+<div class="g3" style="margin-bottom:14px">
+<div class="card">
+  <div class="clabel">Sex &amp; Age</div>
+  <div class="row"><span class="k">Male</span><span class="v">303 (60.6%)</span></div>
+  <div class="row"><span class="k">Female</span><span class="v">197 (39.4%)</span></div>
+  <div class="row"><span class="k">Age mean ± SD</span><span class="v">63.1 ± 13.6 yr</span></div>
+  <div class="row"><span class="k">Age 65+</span><span class="v">47.4%</span></div>
+  <div class="row"><span class="k">Age 45+</span><span class="v">90.8%</span></div>
+</div>
+<div class="card">
+  <div class="clabel">BMI categories</div>
+  <div class="row"><span class="k">Underweight (&lt;18.5)</span><span class="v">4</span></div>
+  <div class="row"><span class="k">Normal (18.5–24.9)</span><span class="v">110</span></div>
+  <div class="row"><span class="k">Overweight (25–29.9)</span><span class="v">205</span></div>
+  <div class="row"><span class="k">Obese (≥30)</span><span class="v">181 (36.2%)</span></div>
+  <div class="row"><span class="k">Mean BMI</span><span class="v">28.5 kg/m²</span></div>
+</div>
+<div class="card">
+  <div class="clabel">Comorbidities</div>
+  <div class="row"><span class="k">Diabetes (DM)</span><span class="v b">37.4%</span></div>
+  <div class="row"><span class="k">Heart failure (HF)</span><span class="v">23.6%</span></div>
+  <div class="row"><span class="k">Arrhythmia history</span><span class="v">26.0%</span></div>
+  <div class="row"><span class="k">Bleeding risk</span><span class="v">8.6%</span></div>
+  <div class="row"><span class="k">IDH last session</span><span class="v r">20.8%</span></div>
+</div>
+</div>
+
+<div class="sh"><h2>Sex differences in access &amp; IDH</h2><div class="ln"></div></div>
+<div class="tw"><table>
+<thead><tr><th>Parameter</th><th>Male (n=303)</th><th>Female (n=197)</th><th>Literature reference</th></tr></thead>
+<tbody>
+<tr><td>AVF access</td><td class="g">68.0%</td><td>68.0%</td><td>DOPPS: 87.8% M vs 84.2% F [4]</td></tr>
+<tr><td>Catheter access</td><td>9.2%</td><td class="r">14.2%</td><td>DOPPS: 12.2% M vs 18.4% F [4]</td></tr>
+<tr><td>IDH rate</td><td>19.1%</td><td class="r">23.4%</td><td>Females higher IDH risk [3]</td></tr>
+<tr><td>Mean IDWG (kg)</td><td>2.92</td><td>2.90</td><td>Al Maimani 2021 [6]</td></tr>
+<tr><td>Mean age (yr)</td><td>63.5</td><td>62.5</td><td>USRDS 2023 [1]</td></tr>
+</tbody>
+</table></div>
+</div></section>
+
+<!-- ═══ PAGE 3: LABS ═══ -->
+<section class="page" id="p3"><div class="inner">
+<h1>Laboratory Profile</h1>
+<p class="sub">Pre-dialysis lab values at enrollment, calibrated to published ESRD population norms.</p>
+
+<div class="g2" style="margin-bottom:14px">
+<div class="chart-wrap">
+  <div class="chart-title">Hemoglobin distribution (g/dL)</div>
+  <canvas id="cHb" height="170"></canvas>
+  <div class="chart-cite">ESRD target Hb 10–12 g/dL. Mean in this cohort: 10.4 g/dL. Lee H et al. 2021: mean 10.4 (9.5–11.2) [3].</div>
+</div>
+<div class="chart-wrap">
+  <div class="chart-title">Serum albumin distribution (g/dL)</div>
+  <canvas id="cAlb" height="170"></canvas>
+  <div class="chart-cite">Hypoalbuminemia (&lt;3.5 g/dL) in 40.2% of cohort. PMC8714045 (n=408): mean 3.59 ± 0.27 [7].</div>
+</div>
+</div>
+
+<div class="g3" style="margin-bottom:14px">
+<div class="card">
+  <div class="clabel">Hematology</div>
+  <div class="row"><span class="k">Hb (g/dL)</span><span class="v">10.4 ± 1.1</span></div>
+  <div class="row"><span class="k">Hct (%)</span><span class="v">31.3 ± 3.3</span></div>
+  <div class="row"><span class="k">Hb &lt;10 g/dL</span><span class="v r">34.6%</span></div>
+  <div class="row"><span class="k">Hb 10–12 (target)</span><span class="v g">58.6%</span></div>
+  <div class="row"><span class="k">Hb &gt;12</span><span class="v">6.8%</span></div>
+</div>
+<div class="card">
+  <div class="clabel">Electrolytes</div>
+  <div class="row"><span class="k">Na (mmol/L)</span><span class="v">137.6 ± 2.9</span></div>
+  <div class="row"><span class="k">K (mEq/L)</span><span class="v">4.8 ± 0.7</span></div>
+  <div class="row"><span class="k">Ca (mg/dL)</span><span class="v">8.9 ± 0.6</span></div>
+  <div class="row"><span class="k">Hyperkalemia &gt;5.5</span><span class="v r">15.8%</span></div>
+  <div class="row"><span class="k">Hypocalcemia &lt;8.4</span><span class="v a">19.6%</span></div>
+</div>
+<div class="card">
+  <div class="clabel">Nutrition &amp; Inflammation</div>
+  <div class="row"><span class="k">Albumin (g/dL)</span><span class="v">3.6 ± 0.4</span></div>
+  <div class="row"><span class="k">Alb &lt;3.5 g/dL</span><span class="v r">40.2%</span></div>
+  <div class="row"><span class="k">Alb &lt;3.8 g/dL</span><span class="v a">66.2%</span></div>
+  <div class="row"><span class="k">CRP median (mg/L)</span><span class="v">5.2</span></div>
+  <div class="row"><span class="k">CRP &gt;10 mg/L</span><span class="v r">26.4%</span></div>
+</div>
+</div>
+
+<div class="sh"><h2>Dialysis adequacy — previous session</h2><div class="ln"></div></div>
+<div class="chart-wrap" style="margin-bottom:14px">
+  <div class="chart-title">Kt/V distribution (previous session) — KDOQI target ≥1.2</div>
+  <canvas id="cKTV" height="140"></canvas>
+  <div class="chart-cite">KDOQI 2015: minimum spKt/V ≥1.2 per session [2]. Under-dialyzed (Kt/V &lt;1.2): 28.4% of this cohort.</div>
+</div>
+
+<div class="note">Low albumin (&lt;3.5 g/dL) in 40.2% of the cohort directly raises IDH risk — albumin is the primary oncotic force maintaining plasma volume during UF. Below 3.5 g/dL, plasma refilling cannot keep up with fluid removal, precipitating intradialytic hypotension. Reference: IDH study (Lee H et al. CJASN 2021) [3]; DOPPS [4].</div>
+</div></section>
+
+<!-- ═══ PAGE 4: PRESCRIPTIONS ═══ -->
+<section class="page" id="p4"><div class="inner">
+<h1>Prescription Output Analysis</h1>
+<p class="sub">Distribution of the 17 prescription values generated for all 500 patients using evidence-based clinical decision rules.</p>
+
+<div class="g2" style="margin-bottom:14px">
+<div class="chart-wrap">
+  <div class="chart-title">Blood flow rate (Qb) distribution — ml/min</div>
+  <canvas id="cQb" height="170"></canvas>
+  <div class="chart-cite">KDOQI 2015: min 200 ml/min [2]. Catheter patients limited to 250. Qb increased if Kt/V &lt;1.2 or URR &lt;65%.</div>
+</div>
+<div class="chart-wrap">
+  <div class="chart-title">UF rate distribution — ml/min</div>
+  <canvas id="cUF" height="170"></canvas>
+  <div class="chart-cite">KDOQI safety limit: 13 ml/kg/h ≈ 17.8 ml/min for 82 kg. 16.6% exceeded limit (high IDWG). [Flythe Kidney Int 2011 [2]].</div>
+</div>
+</div>
+
+<div class="chart-wrap" style="margin-bottom:14px">
+  <div class="chart-title">Dialysate potassium (dK) — mEq/L — Rule of 7: dK = 7 − serum K</div>
+  <canvas id="cDK" height="130"></canvas>
+  <div class="chart-cite">Rule of 7 [Renal Fellow Network 2008]. DOPPS most common prescription: 2.0–2.5 mEq/L. Arrhythmia patients floored at 2.0.</div>
+</div>
+
+<div class="g3" style="margin-bottom:14px">
+<div class="card">
+  <div class="clabel">Temperature (T2)</div>
+  <div class="row"><span class="k">36.5°C (standard)</span><span class="v">353 (70.6%)</span></div>
+  <div class="row"><span class="k">35.5°C (cooled)</span><span class="v b">147 (29.4%)</span></div>
+  <div class="row"><span class="k">Reason: IDH history</span><span class="v">104</span></div>
+  <div class="row"><span class="k">Reason: DM+low Alb</span><span class="v">43</span></div>
+  <div class="row"><span class="k">Evidence</span><span class="v">~70% IDH reduction [EBPG]</span></div>
+</div>
+<div class="card">
+  <div class="clabel">Dialysate Ca (dCa)</div>
+  <div class="row"><span class="k">2.5 mEq/L (default)</span><span class="v">343 (68.6%)</span></div>
+  <div class="row"><span class="k">3.0 mEq/L (raised)</span><span class="v b">157 (31.4%)</span></div>
+  <div class="row"><span class="k">Reason: Ca &lt;8.4</span><span class="v">98</span></div>
+  <div class="row"><span class="k">Reason: IDH history</span><span class="v">104</span></div>
+  <div class="row"><span class="k">Reference</span><span class="v">KDIGO 2017</span></div>
+</div>
+<div class="card">
+  <div class="clabel">Heparin &amp; Dialyzer</div>
+  <div class="row"><span class="k">Standard heparin</span><span class="v g">457 (91.4%)</span></div>
+  <div class="row"><span class="k">Heparin-free</span><span class="v r">43 (8.6%)</span></div>
+  <div class="row"><span class="k">Mean bolus (IU)</span><span class="v">2264</span></div>
+  <div class="row"><span class="k">F160NR (1.6 m²)</span><span class="v">400 (80.0%)</span></div>
+  <div class="row"><span class="k">F180NR (1.8 m²)</span><span class="v">100 (20.0%)</span></div>
+</div>
+</div>
+
+<div class="note warn">UF rate exceeded KDOQI limit (13 ml/kg/h) in 83 patients (16.6%). These patients had IDWG too large to safely remove in 240 min. Clinical response: extend session to 270–300 min, schedule extra mid-week session, or counsel on dietary fluid restriction. Evidence: UF &gt;13 ml/kg/h associated with increased mortality (Flythe et al. Kidney Int 2011 [2]).</div>
+</div></section>
+
+<!-- ═══ PAGE 5: REFERENCES ═══ -->
+<section class="page" id="p5"><div class="inner">
+<h1>References</h1>
+<p class="sub">All sources used to calibrate this synthetic cohort and the prescription decision rules.</p>
+<div class="tw"><div class="tt">Citations</div>
+<div style="padding:6px 14px 14px">
+<ol class="ref-list">
+  <li><em>United States Renal Data System.</em> 2023 Annual Data Report: Epidemiology of Kidney Disease in the United States. NIDDK/NIH 2023. — Males 1.6× more likely ESRD; 808,000+ patients on dialysis; 68% on dialysis vs 32% transplant; DM #1 cause (38.6%).</li>
+  <li><em>NKF KDOQI.</em> Clinical Practice Guideline for Hemodialysis Adequacy: 2015 Update. Am J Kidney Dis 2015;66(5):884–930. — spKt/V ≥1.2 target; UF >13 ml/kg/h mortality risk; Qb 200–500 ml/min range.</li>
+  <li><em>Lee H, Yun D, Yoo J, et al.</em> Deep Learning Model for Real-Time Prediction of Intradialytic Hypotension. Clin J Am Soc Nephrol 2021;16(3):396–406. PMC8011016. n=261,647 sessions. — Hb 10.4 (9.5–11.2); K 4.6; Ca 8.9; Na 137; SBP 139; IDH-1 in 11% sessions; GRU-RNN AUC 0.94.</li>
+  <li><em>Saran R, et al. (DOPPS).</em> Dialysis Outcomes and Practice Patterns Study. PLOS Med 2014; AJKD 2009. — AVF 63–68% US; catheter 15–19%; women: 18.4% catheter vs men 12.2%; AVF mortality advantage RR 1.32 for catheter vs AVF.</li>
+  <li><em>Karaboyas A, et al. (BMC Nephrology).</em> Routine laboratory testing in hemodialysis: how frequently is it needed? BMC Nephrol 2022. n=210 patients. — 62.4% male; median age 72; 47.1% diabetics; parameters within KDIGO targets.</li>
+  <li><em>Al Maimani Y, et al.</em> Interdialytic Weight Gain in Hemodialysis Patients. Open J Nephrol 2021. n=120. — Mean IDWG 2.9 ± 1.7 kg (4.1% dry weight); AVF 84.2%; mean Kt/V 1.4 ± 0.2; mean Qb 277 ± 39 ml/min.</li>
+  <li><em>Karakus S, et al.</em> Serum Albumin Trends in Relation With Prognosis of Individuals Receiving Hemodialysis Therapy. PMC8714045. n=408. — Mean age 62.2 yr; 50.7% male; BMI 25.3; 36.3% DM; 70.1% HTN; baseline albumin 3.59 ± 0.27 g/dL.</li>
+  <li><em>Lee SW, Yang YM, et al.</em> Predialysis Urea Nitrogen Is a Nutritional Marker of Hemodialysis Patients. Chonnam Med J 2022;58(2). n=67. — Average pre-BUN 59.2 mg/dL; post-BUN 15.0; albumin 4.0 g/dL.</li>
+  <li><em>Chen Y, et al.</em> Clinical characteristics and management of hemodialysis patients with pre-dialysis hypertension. PMC9621205. n=1,233. — 24.6% had pre-dialysis SBP ≥160 mmHg; mean SBP 173.8 in hypertensive group; associated with IDH and muscle spasm.</li>
+  <li><em>Moreno JA, et al.</em> Influence of Tunneled Hemodialysis-Catheters on Inflammation and Mortality. PMC8304695. n=108. — Catheter patients had significantly higher CRP and pro-inflammatory lymphocytes vs AVF patients.</li>
+  <li><em>Renal Fellow Network.</em> Rule of 7 for dialysate potassium prescription. 2008. — dK = 7 − serum K; floor at 2.0 for arrhythmia patients.</li>
+  <li><em>KDIGO.</em> Clinical Practice Guideline for the Diagnosis, Evaluation, Prevention, and Treatment of CKD–MBD. Kidney Int Suppl 2017. — dCa default 2.5 mEq/L; range 2.5–3.0; hypocalcemia indication for 3.0.</li>
+  <li><em>Daugirdas JT, Blake PG, Ing TS (eds).</em> Handbook of Dialysis, 5th ed. §14. Lippincott Williams & Wilkins, 2015. — Heparin: bolus 25–30 IU/kg; infusion 500–1500 IU/hr; stop 30–60 min before end; heparin-free protocol for bleeding risk.</li>
+  <li><em>Flythe JE, Kimmel SE, Brunelli SM.</em> Rapid fluid removal during dialysis is associated with cardiovascular morbidity and mortality. Kidney Int 2011;79(2):250–257. — UF >13 ml/kg/h independently associated with all-cause and cardiovascular mortality.</li>
+  <li><em>Mustafa RA, et al. (European Best Practice Guidelines).</em> Cool and isothermic dialysate and intradialytic hypotension. EBPG §3.4. — Cool dialysate 35.0–36.0°C reduces IDH by approximately 70% vs normothermic.</li>
+</ol>
+</div></div>
+</div></section>
+
+<script>
+// Nav
+document.querySelectorAll('nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();const t=a.dataset.page;
+    document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');document.getElementById(t).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+const C=(id,type,labels,data,color,opts={})=>new Chart(document.getElementById(id),{
+  type,data:{labels,datasets:[{data,backgroundColor:color,borderColor:typeof color==='string'?color:color.map(c=>c),borderWidth:type==='line'?2:0.5,fill:type==='line'}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw} patients`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#f0f0f0'},ticks:{font:{size:11},precision:0}}}, ...opts}
+});
+
+// Helpers
+const blue='rgba(21,101,192,0.75)',grn='rgba(46,125,50,0.75)',red='rgba(198,40,40,0.75)',amb='rgba(230,81,0,0.75)',gray='rgba(117,117,117,0.6)';
+
+// PAGE 1
+C('cAge','bar',["22\u201344", "45\u201354", "55\u201364", "65\u201374", "75+"],[46, 83, 134, 134, 103],blue);
+C('cAccess','doughnut',['AVF','AVG','Catheter'],[340,104,56],[grn,amb,red],{plugins:{legend:{display:true,position:'bottom'}},scales:{x:{display:false},y:{display:false}}});
+
+// PAGE 2
+const sbpLabels=["90\u2013100", "100\u2013110", "110\u2013120", "120\u2013130", "130\u2013140", "140\u2013150", "150\u2013160", "160\u2013170", "170\u2013180", "180\u2013190", "190\u2013200", "200\u2013210"];
+const sbpData=[8, 21, 40, 79, 99, 84, 76, 52, 21, 11, 6, 2];
+C('cSBP','bar',sbpLabels,sbpData,sbpLabels.map((_,i)=>i>=7?red:blue));
+const idwgLabels=['<1','1–2','2–3','3–4','4–5','≥5'];
+const idwgData=[
+  25,
+  92,
+  151,
+  147,
+  65,
+  20
+];
+C('cIDWG','bar',idwgLabels,idwgData,idwgLabels.map((_,i)=>i>=4?red:grn));
+
+// PAGE 3
+const hbLabels=['7–8','8–9','9–10','10–11','11–12','12–13','≥13'];
+C('cHb','bar',hbLabels,[3, 46, 124, 171, 116, 37, 2],hbLabels.map((_,i)=>i<=1?red:i<=2?amb:i<=4?grn:blue));
+C('cAlb','bar',["<2.0", "2.0\u20132.5", "2.5\u20133.0", "3.0\u20133.5", "3.5\u20134.0", "4.0\u20134.5", "\u22654.5"],[0, 5, 37, 159, 204, 85, 9],["<2.0", "2.0\u20132.5", "2.5\u20133.0", "3.0\u20133.5", "3.5\u20134.0", "4.0\u20134.5", "\u22654.5"].map((_,i)=>i<=2?red:i<=3?amb:grn));
+C('cKTV','bar',["0.8", "0.9", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8"],[4, 22, 40, 78, 115, 127, 65, 33, 13, 5, 2],["0.8", "0.9", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8"].map((_,i)=>i<=3?red:i<=5?amb:grn));
+
+// PAGE 4
+C('cQb','bar',["250", "300", "325", "350", "375", "400"],[38, 91, 4, 228, 42, 97],["250", "300", "325", "350", "375", "400"].map(v=>v==='250'?red:v==='400'?grn:blue));
+C('cUF','bar',["<4", "4\u20136", "6\u20138", "8\u201310", "10\u201312", "\u226512"],[22, 40, 45, 50, 92, 251],["<4", "4\u20136", "6\u20138", "8\u201310", "10\u201312", "\u226512"].map((_,i)=>i>=4?red:grn));
+C('cDK','bar',["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0"],[37, 57, 153, 148, 75, 17, 13],blue);
+</script>
+</body></html>
